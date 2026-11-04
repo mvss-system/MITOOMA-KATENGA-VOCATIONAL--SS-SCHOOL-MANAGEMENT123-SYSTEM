@@ -30,11 +30,11 @@
             <form @submit.prevent="login" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Username</label>
-                    <input type="text" x-model="loginForm.username" required placeholder="Enter username" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
+                    <input type="text" x-model="loginForm.username" required placeholder="Enter username (admin)" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
-                    <input type="password" x-model="loginForm.password" required placeholder="Enter password" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
+                    <input type="password" x-model="loginForm.password" required placeholder="Enter password (mitooma2026)" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:border-emerald-500">
                 </div>
                 <p x-show="loginError" class="text-xs text-rose-500 font-medium text-center" x-cloak>Invalid username or password. Try again.</p>
                 <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg text-sm font-bold transition shadow-md">
@@ -394,7 +394,7 @@
         </div>
     </div>
 
-    <!-- ALPINE.JS APP LOGIC -->
+    <!-- ALPINE.JS APP LOGIC WITH LOCALSTORAGE PERSISTENCE -->
     <script>
         function schoolApp() {
             return {
@@ -405,28 +405,34 @@
                 studentSearch: '',
                 openStudentModal: false,
                 newStudent: { name: '', classLevel: 'Senior One', stream: '', contact: '' },
-                students: [
+                
+                // Automatically loads saved records from browser storage
+                students: JSON.parse(localStorage.getItem('mvss_students')) || [
                     { id: 'MVSS/2026/001', name: 'Atuheire Brenda', classLevel: 'Senior One', stream: 'East (Science)', contact: '0774123456' },
                     { id: 'MVSS/2026/002', name: 'Byaruhanga Ronald', classLevel: 'Senior Two', stream: 'West (Vocational)', contact: '0702987654' },
                     { id: 'MVSS/2026/003', name: 'Kiconco Patricia', classLevel: 'Senior Three', stream: 'North (Arts)', contact: '0781112233' }
                 ],
+                
                 staff: [
                     { name: 'Omara Brian', dept: 'Science Department', role: 'Physics & Chemistry Instructor', contact: '+256784961499' },
                     { name: 'Akello Sarah', dept: 'Languages', role: 'English & Literature', contact: '0771111111' },
                     { name: 'Tumukunde Moses', dept: 'Vocational Dept', role: 'Technical Skills Head', contact: '0702222222' }
                 ],
+                
                 login() {
-                    if (this.loginForm.username === 'admin' && this.loginForm.password === 'mitooma2026') {
+                    if (this.loginForm.username.trim() === 'admin' && this.loginForm.password === 'mitooma2026') {
                         this.isAuthenticated = true;
                         this.loginError = false;
                     } else {
                         this.loginError = true;
                     }
                 },
+                
                 logout() {
                     this.isAuthenticated = false;
                     this.loginForm = { username: '', password: '' };
                 },
+                
                 get filteredStudents() {
                     if (!this.studentSearch) return this.students;
                     return this.students.filter(s => 
@@ -434,6 +440,7 @@
                         s.id.toLowerCase().includes(this.studentSearch.toLowerCase())
                     );
                 },
+                
                 addStudent() {
                     const idNum = String(this.students.length + 1).padStart(3, '0');
                     this.students.push({
@@ -443,11 +450,18 @@
                         stream: this.newStudent.stream,
                         contact: this.newStudent.contact
                     });
+                    
+                    // Permanently save to browser local storage
+                    localStorage.setItem('mvss_students', JSON.stringify(this.students));
+                    
                     this.newStudent = { name: '', classLevel: 'Senior One', stream: '', contact: '' };
                     this.openStudentModal = false;
                 },
+                
                 deleteStudent(id) {
                     this.students = this.students.filter(s => s.id !== id);
+                    // Update browser storage after deletion
+                    localStorage.setItem('mvss_students', JSON.stringify(this.students));
                 }
             }
         }

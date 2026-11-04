@@ -1,0 +1,2668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitooma Vocational Secondary School Management System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-green: #1b5e20;
+            --light-green: #2e7d32;
+            --accent-gold: #fbc02d;
+            --bg-color: #f4f6f8;
+            --text-dark: #333333;
+            --white: #ffffff;
+            --sidebar-width: 260px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- LOGIN PAGE --- */
+        #login-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(135deg, rgba(27, 94, 32, 0.95), rgba(46, 125, 50, 0.85));
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: var(--primary-green);
+            margin-bottom: 5px;
+            font-size: 22px;
+        }
+
+        .login-box p.tagline {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background-color: var(--primary-green);
+            color: var(--white);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--light-green);
+        }
+
+        .btn-danger {
+            background-color: #d32f2f;
+        }
+        .btn-danger:hover {
+            background-color: #b71c1c;
+        }
+
+        .btn-print {
+            background-color: #0277bd;
+        }
+        .btn-print:hover {
+            background-color: #01579b;
+        }
+
+        .btn-pdf {
+            background-color: #c62828;
+        }
+        .btn-pdf:hover {
+            background-color: #b71c1c;
+        }
+
+        /* --- HIGHLIGHT BRANDING --- */
+        .brand-highlight {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            color: #b78103;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            border: 1px solid #ffe082;
+        }
+
+        .contact-info-footer {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #444;
+        }
+
+        /* --- DASHBOARD APP LAYOUT --- */
+        #app-container {
+            display: none;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--primary-green);
+            color: var(--white);
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h3 {
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 10px 0;
+            overflow-y: auto;
+            flex-grow: 1;
+            max-height: calc(100vh - 150px);
+        }
+
+        .sidebar-menu li {
+            padding: 9px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 12px;
+        }
+
+        .sidebar-menu li:hover, .sidebar-menu li.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .sidebar-footer {
+            padding: 10px;
+            font-size: 11px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease-in-out;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .top-bar {
+            background: var(--white);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            min-height: 60px;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .top-bar h2 {
+            color: var(--primary-green);
+            font-size: 17px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .content-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .module-section {
+            display: none;
+        }
+
+        .module-section.active {
+            display: block;
+        }
+
+        /* --- CARDS & TABLES --- */
+        .card {
+            background: var(--white);
+            padding: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            margin-bottom: 12px;
+            color: var(--primary-green);
+            font-size: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            background: var(--white);
+            border-radius: 6px;
+            overflow: hidden;
+            min-width: 600px;
+        }
+
+        table th, table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+        }
+
+        table th {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        table tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        .badge {
+            background: #e8f5e9;
+            color: var(--primary-green);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .search-box-container {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* --- SINGLE PAGE REPORT CARD STYLES WITH DIAGONAL WATERMARK --- */
+        .report-card-wrapper {
+            background: #fff;
+            padding: 15px 20px;
+            border: 2px solid var(--primary-green);
+            border-radius: 8px;
+            margin-top: 15px;
+            color: #000;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            overflow: hidden;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+
+        .report-card-wrapper::after {
+            content: "MVSS";
+            position: absolute;
+            top: 40%;
+            left: 15%;
+            font-size: 120px;
+            color: rgba(27, 94, 32, 0.08);
+            transform: rotate(-30deg);
+            z-index: 0;
+            font-weight: bold;
+            pointer-events: none;
+            letter-spacing: 20px;
+        }
+
+        .report-header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-green);
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+
+        .report-header-text h1 {
+            color: var(--primary-green);
+            font-size: 17px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-header-text p {
+            font-size: 10px;
+            color: #333;
+            margin-top: 1px;
+        }
+
+        .report-sub-banner {
+            position: relative;
+            z-index: 1;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            font-weight: bold;
+            padding: 3px;
+            font-size: 11px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .student-bio-row {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        .report-table {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+
+        .report-table th, .report-table td {
+            border: 1px solid #000;
+            padding: 3px 5px;
+            text-align: center;
+        }
+
+        .report-table th {
+            background-color: #f2f2f2;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .report-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .grading-scale-box {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 6px;
+            font-size: 10px;
+            gap: 10px;
+        }
+
+        .grading-table {
+            border-collapse: collapse;
+            width: 240px;
+        }
+
+        .grading-table td {
+            border: 1px solid #000;
+            padding: 2px 4px;
+            text-align: center;
+        }
+
+        .comment-box-report {
+            position: relative;
+            z-index: 1;
+            margin-top: 6px;
+            border: 1px solid #000;
+            padding: 4px 8px;
+            font-size: 10px;
+        }
+
+        .watermark {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 11px;
+            color: #777;
+            font-weight: bold;
+            border-top: 1px dashed #ccc;
+            padding-top: 12px;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-area, #printable-area * {
+                visibility: visible;
+            }
+            #printable-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 5px;
+                border: none;
+                box-shadow: none;
+                page-break-after: avoid;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+            .menu-toggle {
+                display: inline-block;
+            }
+            .content-body {
+                padding: 12px;
+            }
+            .top-bar {
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECURE LOGIN SCREEN -->
+    <div id="login-container">
+        <div class="login-box">
+            <h2>Mitooma Vocational SS</h2>
+            <p class="tagline">New Lower Secondary Curriculum Portal</p>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Login As Role / Portal</label>
+                    <select id="loginRole" onchange="toggleLoginInputs()" required>
+                        <option value="Admin">Admin (Staff / Headmaster)</option>
+                        <option value="Parent">Parent (View Student Details)</option>
+                    </select>
+                </div>
+                <div id="adminLoginFields">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="username" placeholder="Enter username (e.g. admin)">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" placeholder="Enter password">
+                    </div>
+                </div>
+                <div id="parentLoginFields" style="display: none;">
+                    <div class="form-group">
+                        <label>Student ID Number</label>
+                        <input type="text" id="parent_student_id" placeholder="e.g. MVS-101" oninput="fetchParentStudentName()">
+                    </div>
+                    <div id="parentStudentNameDisplay" style="font-size: 12px; color: var(--primary-green); font-weight: bold; margin-bottom: 8px;"></div>
+                    <div class="form-group">
+                        <label>Parent Security Code</label>
+                        <input type="password" id="parent_code" placeholder="Enter parent secret code...">
+                    </div>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Login to Portal</button>
+            </form>
+            <div style="margin-top: 12px; margin-bottom: 12px;">
+                <img src="classroom.JPG" alt="Classroom" style="width: 100%; max-height: 140px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
+            </div>
+            <div style="margin-top: 10px;" class="contact-info-footer">
+                <strong>Official School Administration Contacts:</strong><br>
+                📞 Phones: +256774804838 / 0782205396<br><br>
+                <strong>Developer Contacts:</strong> +256784961499, 0708251010<br>
+                ✉️ prothiapraize256@gmail.com | omarabrian2566@gmail.com<br>
+                Engineered by <span class="brand-highlight">omaraTECHsolutions</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD APP -->
+    <div id="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar" id="sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <h3>Mitooma Vocational SS</h3>
+                    <p style="font-size: 11px; opacity: 0.8;">New Curriculum Portal</p>
+                </div>
+                <ul class="sidebar-menu" id="sidebarMenu">
+                    <!-- Populated dynamically based on role -->
+                </ul>
+            </div>
+            <div class="sidebar-footer contact-info-footer">
+                Engineered by <span class="brand-highlight">omaraTECHsolutions</span><br>
+                📞 +256784961499 / 0708251010
+            </div>
+        </div>
+
+        <!-- Main Content Panel -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+                    <h2 id="page-title">Dashboard Overview</h2>
+                </div>
+                <div style="font-size: 13px; font-weight: 600; color: #555;">
+                    <span id="userRoleBadge">Role: Admin</span> | <a href="#" onclick="location.reload()" style="color: #d32f2f; text-decoration: none; margin-left: 5px;">Logout</a>
+                </div>
+            </div>
+
+            <div class="content-body" onclick="handleBodyClick()">
+                
+                <!-- 1. DASHBOARD OVERVIEW -->
+                <div id="dashboard" class="module-section active">
+                    <div class="card">
+                        <h3>Welcome to Mitooma Vocational Secondary School System</h3>
+                        <p>This portal operates under Uganda's New Lower Secondary Curriculum. Enter partial or complete subject marks, manage category fees, track comprehensive attendance with subject drop-downs, view top/bottom students per class, and manage staff payroll with NSSF and Tax deductions.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="card" style="text-align: center;">
+                            <h4 style="color: #666; font-size: 13px;">Total Registered Students</h4>
+                            <p id="stat-students" style="font-size: 26px; font-weight: bold; color: var(--primary-green); margin-top: 8px;">0</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4 style="color: #666; font-size: 13px;">Total Teaching Staff</h4>
+                            <p id="stat-teachers" style="font-size: 26px; font-weight: bold; color: var(--primary-green); margin-top: 8px;">0</p>
+                        </div>
+                        <div class="card" style="text-align: center;">
+                            <h4 style="color: #666; font-size: 13px;">Fee Records Logged</h4>
+                            <p id="stat-fees" style="font-size: 26px; font-weight: bold; color: var(--primary-green); margin-top: 8px;">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. SEARCH STUDENT & REPORT CARD GENERATOR -->
+                <div id="searchportal" class="module-section">
+                    <div class="card no-print">
+                        <h3>Student Report Card Generator</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Select Term and Class, enter Student ID (e.g., MVS-101) to generate a single-page PDF report card with MVSS watermark.</p>
+                        <div class="search-box-container">
+                            <div style="display: flex; gap: 10px; flex-grow: 1; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 140px;">
+                                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Select Term:</label>
+                                    <select id="gen_term" style="padding: 9px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+                                        <option value="Term One">Term One</option>
+                                        <option value="Term Two" selected>Term Two</option>
+                                        <option value="Term Three">Term Three</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1; min-width: 140px;">
+                                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Select Class:</label>
+                                    <select id="gen_class" style="padding: 9px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+                                        <option value="Senior One">Senior One (S.1)</option>
+                                        <option value="Senior Two" selected>Senior Two (S.2)</option>
+                                        <option value="Senior Three">Senior Three (S.3)</option>
+                                        <option value="Senior Four">Senior Four (S.4)</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 2; min-width: 200px;">
+                                    <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 2px;">Student ID:</label>
+                                    <input type="text" id="searchIdInput" placeholder="Enter Student ID (e.g. MVS-101)..." style="padding: 9px; width: 100%; border: 1px solid #ccc; border-radius: 4px;">
+                                </div>
+                            </div>
+                            <button class="btn" style="margin-top: 18px;" onclick="searchStudentById()">Generate Report</button>
+                        </div>
+                    </div>
+                    <div id="searchResultArea"></div>
+                </div>
+
+                <!-- 3. STUDENTS GENERAL DATABASE -->
+                <div id="students" class="module-section">
+                    <div class="card">
+                        <h3>Register New Student</h3>
+                        <form id="studentForm" onsubmit="addStudent(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Student ID Number</label>
+                                    <input type="text" id="s_id" placeholder="e.g., MVS-101" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" id="s_name" placeholder="Full name..." required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Class Level</label>
+                                    <select id="s_class" required>
+                                        <option value="Senior One">Senior One (S.1)</option>
+                                        <option value="Senior Two">Senior Two (S.2)</option>
+                                        <option value="Senior Three">Senior Three (S.3)</option>
+                                        <option value="Senior Four">Senior Four (S.4)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Student Category</label>
+                                    <select id="s_category" required>
+                                        <option value="Day Scholar">Day Scholar</option>
+                                        <option value="Boarding Student">Boarding Student</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Parent Security Code</label>
+                                    <input type="text" id="s_parent_code" placeholder="Secret code for parent login..." required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Save Student</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3>Master Student Directory</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID Number</th>
+                                        <th>Full Name</th>
+                                        <th>Class Level</th>
+                                        <th>Category</th>
+                                        <th>Parent Code</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTableBody">
+                                    <tr><td colspan="7" style="text-align: center; color: #777;">No students registered yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. SENIOR ONE (S.1) & PERFORMANCE SUMMARY -->
+                <div id="sen1" class="module-section">
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h3>Senior One (S.1) Class List & Performance Ranking</h3>
+                        <button class="btn btn-pdf" onclick="printClassPDF('Senior One')">📥 Print Class List PDF</button>
+                    </div>
+                    <div class="card" style="background: #e8f5e9; border: 1px solid var(--primary-green);">
+                        <h4 style="color: var(--primary-green); margin-bottom: 8px;">Top 3 and Bottom 3 Performers (Senior One)</h4>
+                        <div id="ranking_Senior_One">Loading rankings...</div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table id="table-sen1">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Category</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sen1TableBody">
+                                    <tr><td colspan="4" style="text-align: center; color: #777;">No Senior One students added yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. SENIOR TWO (S.2) -->
+                <div id="sen2" class="module-section">
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h3>Senior Two (S.2) Class List & Performance Ranking</h3>
+                        <button class="btn btn-pdf" onclick="printClassPDF('Senior Two')">📥 Print Class List PDF</button>
+                    </div>
+                    <div class="card" style="background: #e8f5e9; border: 1px solid var(--primary-green);">
+                        <h4 style="color: var(--primary-green); margin-bottom: 8px;">Top 3 and Bottom 3 Performers (Senior Two)</h4>
+                        <div id="ranking_Senior_Two">Loading rankings...</div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table id="table-sen2">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Category</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sen2TableBody">
+                                    <tr><td colspan="4" style="text-align: center; color: #777;">No Senior Two students added yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. SENIOR THREE (S.3) -->
+                <div id="sen3" class="module-section">
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h3>Senior Three (S.3) Class List & Performance Ranking</h3>
+                        <button class="btn btn-pdf" onclick="printClassPDF('Senior Three')">📥 Print Class List PDF</button>
+                    </div>
+                    <div class="card" style="background: #e8f5e9; border: 1px solid var(--primary-green);">
+                        <h4 style="color: var(--primary-green); margin-bottom: 8px;">Top 3 and Bottom 3 Performers (Senior Three)</h4>
+                        <div id="ranking_Senior_Three">Loading rankings...</div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table id="table-sen3">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Category</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sen3TableBody">
+                                    <tr><td colspan="4" style="text-align: center; color: #777;">No Senior Three students added yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. SENIOR FOUR (S.4) -->
+                <div id="sen4" class="module-section">
+                    <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <h3>Senior Four (S.4) Candidate Class List & Performance Ranking</h3>
+                        <button class="btn btn-pdf" onclick="printClassPDF('Senior Four')">📥 Print Class List PDF</button>
+                    </div>
+                    <div class="card" style="background: #e8f5e9; border: 1px solid var(--primary-green);">
+                        <h4 style="color: var(--primary-green); margin-bottom: 8px;">Top 3 and Bottom 3 Performers (Senior Four)</h4>
+                        <div id="ranking_Senior_Four">Loading rankings...</div>
+                    </div>
+                    <div class="card">
+                        <div class="table-responsive">
+                            <table id="table-sen4">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Student Name</th>
+                                        <th>Category</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sen4TableBody">
+                                    <tr><td colspan="4" style="text-align: center; color: #777;">No Senior Four students added yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. TEACHERS -->
+                <div id="teachers" class="module-section">
+                    <div class="card">
+                        <h3>Add Teacher / Staff</h3>
+                        <form id="teacherForm" onsubmit="addTeacher(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Teacher Name</label>
+                                    <input type="text" id="t_name" placeholder="Name..." required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Department / Learning Areas</label>
+                                    <input type="text" id="t_sub" placeholder="e.g., Fine Art / Literature" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Phone Contact</label>
+                                    <input type="text" id="t_phone" placeholder="+256..." required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Save Teacher</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3>Staff Directory</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Teacher Name</th>
+                                        <th>Department / Learning Areas</th>
+                                        <th>Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teacherTableBody">
+                                    <tr><td colspan="3" style="text-align: center; color: #777;">No teachers added yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8B. TEACHERS PAYROLL (Protected by Fees Page password) -->
+                <div id="teacherSpayroll" class="module-section">
+                    <div id="payrollLoginCard" class="card" style="max-width: 450px; margin: 0 auto; text-align: center;">
+                        <h3>Secure Staff Payroll Access</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Enter the same password used for the fees portal to access staff payroll details.</p>
+                        <div class="form-group">
+                            <input type="password" id="payrollPasswordInput" placeholder="Enter payroll / fees password...">
+                        </div>
+                        <button class="btn" style="width: 100%;" onclick="verifyPayrollAccess()">Access Staff Payroll</button>
+                    </div>
+
+                    <div id="payrollContentArea" style="display: none;">
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <h3>Staff Salary, Tax, NSSF & Advance Management</h3>
+                                <button class="btn" style="background: #d32f2f; font-size: 11px; padding: 5px 10px;" onclick="lockPayrollPortal()">Lock Payroll</button>
+                            </div>
+                            <form id="payrollForm" onsubmit="saveStaffPayroll(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Select Teacher</label>
+                                        <select id="p_teacher_name" required>
+                                            <!-- populated dynamically -->
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Total Salary (UGX)</label>
+                                        <input type="number" id="p_salary" placeholder="e.g. 800000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Tax Deductions (UGX)</label>
+                                        <input type="number" id="p_tax" placeholder="e.g. 50000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>NSSF Contribution (UGX)</label>
+                                        <input type="number" id="p_nssf" placeholder="e.g. 40000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Advance Taken (UGX)</label>
+                                        <input type="number" id="p_advance" placeholder="e.g. 100000" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Compute & Save Payroll Record</button>
+                            </form>
+                        </div>
+                        <div class="card">
+                            <h3>Staff Financial Summary & Net Balance</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Teacher Name</th>
+                                            <th>Total Salary</th>
+                                            <th>Tax</th>
+                                            <th>NSSF</th>
+                                            <th>Advance Taken</th>
+                                            <th>Net Balance</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="payrollTableBody">
+                                        <tr><td colspan="7" style="text-align: center; color: #777;">No payroll records logged yet.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. ENTER MARKS -->
+                <div id="marksentry" class="module-section">
+                    <div class="card">
+                        <h3>Record Subject Marks (Partial entry supported)</h3>
+                        <p style="font-size: 12px; color: #555; margin-bottom: 12px;">You can record marks for any subject. Unentered subjects will automatically show blank on report cards without blocking generation.</p>
+                        <form id="marksForm" onsubmit="addMarks(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Student ID</label>
+                                    <input type="text" id="m_id" placeholder="e.g., MVS-101" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Term</label>
+                                    <select id="m_term" required>
+                                        <option value="Term One">Term One</option>
+                                        <option value="Term Two" selected>Term Two</option>
+                                        <option value="Term Three">Term Three</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Subject / Learning Area</label>
+                                    <select id="m_subject" required>
+                                        <option value="English">English</option>
+                                        <option value="Geography">Geography</option>
+                                        <option value="Kiswahili">Kiswahili</option>
+                                        <option value="Mathematics">Mathematics</option>
+                                        <option value="Physics">Physics</option>
+                                        <option value="Chemistry">Chemistry</option>
+                                        <option value="Biology">Biology</option>
+                                        <option value="History / Pol. Educ.">History / Pol. Educ.</option>
+                                        <option value="Physical Education">Physical Education</option>
+                                        <option value="Entrepreneurship">Entrepreneurship</option>
+                                        <option value="Religious Education">Religious Education</option>
+                                        <option value="ICT">ICT</option>
+                                        <option value="IPS">IPS</option>
+                                        <option value="Food & Nutrition">Food & Nutrition</option>
+                                        <option value="Agriculture">Agriculture</option>
+                                        <option value="Literature in English">Literature in English</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>A1 Score (max 3)</label>
+                                    <input type="number" step="0.1" id="m_a1" placeholder="e.g. 2.5" min="0" max="3" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>A2 Score (max 3)</label>
+                                    <input type="number" step="0.1" id="m_a2" placeholder="e.g. 3.0" min="0" max="3" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>A3 Score (max 3)</label>
+                                    <input type="number" step="0.1" id="m_a3" placeholder="e.g. 2.0" min="0" max="3" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>EOT Mark (out of 80%)</label>
+                                    <input type="number" step="0.1" id="m_eot" placeholder="e.g. 65" min="0" max="80" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Teacher's Initial</label>
+                                    <input type="text" id="m_initial" placeholder="e.g. J.O" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Save Subject Marks</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3>Recorded Subject Marks Ledger</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Term</th>
+                                        <th>Subject</th>
+                                        <th>A1</th>
+                                        <th>A2</th>
+                                        <th>A3</th>
+                                        <th>EOT (80)</th>
+                                        <th>Tr</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="marksTableBody">
+                                    <tr><td colspan="9" style="text-align: center; color: #777;">No marks recorded yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. TERM & NEXT TERM SETTINGS -->
+                <div id="termsettings" class="module-section">
+                    <div class="card" style="max-width: 600px; margin: 0 auto;">
+                        <h3>Term & "Next Term Begins" Configuration</h3>
+                        <form id="termSettingsForm" onsubmit="saveTermSettings(event)">
+                            <div class="form-group">
+                                <label>Select Term to Configure</label>
+                                <select id="ts_term" onchange="loadTermSettings()" required>
+                                    <option value="Term One">Term One</option>
+                                    <option value="Term Two" selected>Term Two</option>
+                                    <option value="Term Three">Term Three</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Next Term Begins (Date)</label>
+                                <input type="text" id="ts_date" placeholder="e.g. 14/09/2026" required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%; margin-top: 5px;">Save Reopening Date</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 11. CLASS ATTENDANCE MASTER -->
+                <div id="classattendance" class="module-section">
+                    <div class="card no-print">
+                        <h3>Comprehensive Class Attendance Master & Subject Tracking</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 12px;">Track Morning Preps, Evening Preps, or specific Subject Attendance. Multiple category entries on the same date are fully supported and can be saved & printed in PDF.</p>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Filter by Class</label>
+                                <select id="att_class_filter" onchange="renderClassAttendanceTable()">
+                                    <option value="Senior One">Senior One (S.1)</option>
+                                    <option value="Senior Two" selected>Senior Two (S.2)</option>
+                                    <option value="Senior Three">Senior Three (S.3)</option>
+                                    <option value="Senior Four">Senior Four (S.4)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Term</label>
+                                <select id="att_term_filter" onchange="renderClassAttendanceTable()">
+                                    <option value="Term One">Term One</option>
+                                    <option value="Term Two" selected>Term Two</option>
+                                    <option value="Term Three">Term Three</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Session / Category Type</label>
+                                <select id="att_session_type" onchange="toggleSubjectDropdown()">
+                                    <option value="Morning Prep">Morning Prep</option>
+                                    <option value="Evening Prep" selected>Evening Prep</option>
+                                    <option value="Subject Attendance">Subject Attendance</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="attSubjectGroup" style="display: none;">
+                                <label>Select Subject</label>
+                                <select id="att_subject_select">
+                                    <option value="English">English</option>
+                                    <option value="Geography">Geography</option>
+                                    <option value="Kiswahili">Kiswahili</option>
+                                    <option value="Mathematics">Mathematics</option>
+                                    <option value="Physics">Physics</option>
+                                    <option value="Chemistry">Chemistry</option>
+                                    <option value="Biology">Biology</option>
+                                    <option value="History / Pol. Educ.">History / Pol. Educ.</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Adjustable Date</label>
+                                <input type="date" id="att_date_picker" onchange="renderClassAttendanceTable()">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn" onclick="saveClassAttendanceBatch()">💾 Save Attendance Batch</button>
+                            <button class="btn btn-pdf" onclick="printAttendancePDF()">📥 Print Attendance PDF</button>
+                        </div>
+                    </div>
+
+                    <div class="card" id="printableAttendanceArea">
+                        <div style="text-align: center; margin-bottom: 12px; display: none;" id="attendancePrintHeader">
+                            <h2 style="color: var(--primary-green);">Mitooma Vocational Secondary School</h2>
+                            <p style="font-size: 12px;">Official Attendance Sheet &bull; Official Contacts: 0774804838 / 0782205396</p>
+                        </div>
+                        <h3>Student Attendance Roster</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Student Name</th>
+                                        <th>Category</th>
+                                        <th>Session / Subject / Date</th>
+                                        <th>Status (Present / Sick / Absent / Home / Changed)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="classAttTableBody">
+                                    <tr><td colspan="5" style="text-align: center; color: #777;">No students found in this class.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. FEES RECORDS & CATEGORY SETUP -->
+                <div id="fees" class="module-section">
+                    <div id="feesLoginCard" class="card" style="max-width: 450px; margin: 0 auto; text-align: center;">
+                        <h3>Secure Fees Portal Access</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Enter fees password (default is <b>mitooma1234</b>, changeable below using secret code <b>123</b>).</p>
+                        <div class="form-group">
+                            <input type="password" id="feesPasswordInput" placeholder="Enter password...">
+                        </div>
+                        <button class="btn" style="width: 100%;" onclick="verifyFeesAccess()">Access Fees Portal</button>
+                        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; text-align: left;">
+                            <h4 style="font-size: 12px; color: var(--primary-green); margin-bottom: 6px;">Change Fees Password (Requires Secret Code 123)</h4>
+                            <div class="form-group" style="margin-bottom: 6px;">
+                                <input type="password" id="fees_secret_code" placeholder="Enter Secret Code (123)...">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 8px;">
+                                <input type="password" id="new_fees_pass" placeholder="Enter new fees password...">
+                            </div>
+                            <button class="btn" style="background: #0277bd; width: 100%; font-size: 12px; padding: 6px;" onclick="updateFeesPasswordSecure()">Update Fees Password</button>
+                        </div>
+                    </div>
+
+                    <div id="feesContentArea" style="display: none;">
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <h3>Global Category Fee Setup (Day Scholars vs Boarding Students)</h3>
+                                <button class="btn" style="background: #d32f2f; font-size: 11px; padding: 5px 10px;" onclick="lockFeesPortal()">Lock Fees Portal</button>
+                            </div>
+                            <p style="font-size: 13px; color: #555; margin-bottom: 12px;">Edit total fees and next term fees once per category and term; all students in that category are updated automatically.</p>
+                            <form id="categoryFeeForm" onsubmit="saveCategoryFees(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Select Term</label>
+                                        <select id="cf_term" onchange="loadCategoryFeeValues()" required>
+                                            <option value="Term One">Term One</option>
+                                            <option value="Term Two" selected>Term Two</option>
+                                            <option value="Term Three">Term Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Student Category</label>
+                                        <select id="cf_category" onchange="loadCategoryFeeValues()" required>
+                                            <option value="Day Scholar">Day Scholar</option>
+                                            <option value="Boarding Student">Boarding Student</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Standard Total Fees (UGX)</label>
+                                        <input type="text" id="cf_total" placeholder="e.g. 250000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Standard Next Term Fees (UGX)</label>
+                                        <input type="text" id="cf_next" placeholder="e.g. 250000" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Save Category Fees</button>
+                            </form>
+                        </div>
+
+                        <div class="card" style="background: #e8f5e9; border: 1px solid var(--primary-green);">
+                            <h3>School Financial Summary</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px;">
+                                <div style="background: white; padding: 12px; border-radius: 6px;">
+                                    <h4 style="font-size: 12px; color: #555;">Total Fees Collected (All Terms)</h4>
+                                    <p id="sum-collected" style="font-size: 20px; font-weight: bold; color: var(--primary-green); margin-top: 5px;">UGX 0</p>
+                                </div>
+                                <div style="background: white; padding: 12px; border-radius: 6px;">
+                                    <h4 style="font-size: 12px; color: #555;">Total Balance Remaining</h4>
+                                    <p id="sum-balance" style="font-size: 20px; font-weight: bold; color: #d32f2f; margin-top: 5px;">UGX 0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Record Individual Student Payment & Co-Curricular Activity</h3>
+                            <form id="feeForm" onsubmit="addFee(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Student ID</label>
+                                        <input type="text" id="f_id" placeholder="e.g., MVS-101" oninput="fetchFeeStudentName()" required>
+                                    </div>
+                                    <div id="feeStudentNameDisplay" style="grid-column: 1 / -1; font-size: 13px; color: var(--primary-green); font-weight: bold; padding: 4px 0;"></div>
+                                    <div class="form-group">
+                                        <label>Term</label>
+                                        <select id="f_term" required>
+                                            <option value="Term One">Term One</option>
+                                            <option value="Term Two" selected>Term Two</option>
+                                            <option value="Term Three">Term Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Amount Paid (UGX)</label>
+                                        <input type="text" id="f_amount" placeholder="e.g., 200000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Co-Curricular Sport</label>
+                                        <select id="f_sport" required>
+                                            <option value="Football">Football</option>
+                                            <option value="Netball">Netball</option>
+                                            <option value="Athletics">Athletics</option>
+                                            <option value="Volleyball">Volleyball</option>
+                                            <option value="Basketball">Basketball</option>
+                                            <option value="Woodball">Woodball</option>
+                                            <option value="Badminton">Badminton</option>
+                                            <option value="Rugby">Rugby</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Save Payment & Sport</button>
+                            </form>
+                        </div>
+                        <div class="card">
+                            <h3>Fee & Financial Records</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student ID</th>
+                                            <th>Student Name</th>
+                                            <th>Term</th>
+                                            <th>Category</th>
+                                            <th>Total Fees</th>
+                                            <th>Paid</th>
+                                            <th>Balance</th>
+                                            <th>Sport</th>
+                                            <th>Next Term Fees</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="feeTableBody">
+                                        <tr><td colspan="9" style="text-align: center; color: #777;">No fee entries logged yet.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. ATTENDANCE & DISCIPLINE -->
+                <div id="attendance" class="module-section">
+                    <div class="card">
+                        <h3>Log General Attendance & Discipline Record</h3>
+                        <form id="attForm" onsubmit="addAtt(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Student ID</label>
+                                    <input type="text" id="a_id" placeholder="e.g., MVS-101" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Record Type</label>
+                                    <select id="a_type">
+                                        <option value="Present">Present</option>
+                                        <option value="Sick">Sick</option>
+                                        <option value="Home">Home</option>
+                                        <option value="Absent">Absent</option>
+                                        <option value="Changed">Changed</option>
+                                        <option value="Warning">Discipline: Warning</option>
+                                        <option value="Suspension">Discipline: Suspension</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Remarks</label>
+                                    <input type="text" id="a_remarks" placeholder="Details..." required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Save Record</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3>Attendance & Discipline Logs</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Record Type</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attTableBody">
+                                    <tr><td colspan="3" style="text-align: center; color: #777;">No records logged yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14. RESOURCES, CIRCULARS & LETTERS -->
+                <div id="resources" class="module-section">
+                    <div class="card">
+                        <h3>Upload External Letters & Administrative Circulars</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 12px;">Upload PDF document files. Specify a target Student ID or leave blank to address to <b>All Students and Parents</b>.</p>
+                        <form id="uploadLetterForm" onsubmit="uploadLetterFile(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Letter / Circular Title</label>
+                                    <input type="text" id="ul_title" placeholder="e.g. UNEB Registration Circular 2026" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Target Student ID (Optional)</label>
+                                    <input type="text" id="ul_target_id" placeholder="Leave blank for All Students / Parents">
+                                </div>
+                                <div class="form-group">
+                                    <label>Select Letter File (PDF)</label>
+                                    <input type="file" id="ul_file" accept=".pdf" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Upload Letter File</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Uploaded Letters & Circulars Repository</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Addressed To</th>
+                                        <th>File Name</th>
+                                        <th>Upload Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="uploadedLettersTableBody">
+                                    <tr><td colspan="5" style="text-align: center; color: #777;">No letter files uploaded yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Generate Student-Specific Administrative Letters & Circulars</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 12px;">Select the letter type and student ID to generate formal downloadable & printable correspondence.</p>
+                        <form id="letterForm" onsubmit="generateLetter(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Student ID</label>
+                                    <input type="text" id="l_id" placeholder="e.g. MVS-101" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Document Type</label>
+                                    <select id="l_type" required>
+                                        <option value="Offer Letter">Offer Letter</option>
+                                        <option value="End of Term Circular">End of Term Circular</option>
+                                        <option value="Suspension Letter">Suspension Letter (with reasons)</option>
+                                        <option value="Fees Clearance Reminder">Fees Clearance Reminder</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" id="suspensionReasonGroup">
+                                    <label>Suspension Reason (if applicable)</label>
+                                    <input type="text" id="l_reason" placeholder="e.g. Gross indiscipline / missing classes">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Generate Letter</button>
+                        </form>
+                    </div>
+                    <div id="letterResultArea"></div>
+                </div>
+
+                <!-- 15. ADMIN-STAFF COMMUNICATION -->
+                <div id="staffcomm" class="module-section">
+                    <div class="card">
+                        <h3>Headmaster & Deputy Headteacher Communication Board</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 12px;">Administration can post directives and announcements for teaching staff. Teachers can reply directly below each announcement.</p>
+                        <form id="commForm" onsubmit="postAdminAnnouncement(event)">
+                            <div class="form-group">
+                                <label>Sender Title</label>
+                                <select id="c_sender" required>
+                                    <option value="Headmaster">Headmaster</option>
+                                    <option value="Deputy Headteacher">Deputy Headteacher</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Announcement / Directive Message</label>
+                                <textarea id="c_message" rows="3" placeholder="Type announcement for teachers..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn" style="width: auto; padding: 10px 20px;">Post Announcement</button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h3>Announcements & Teacher Replies</h3>
+                        <div id="announcementBoard">
+                            <p style="color: #777; font-size: 13px;">No announcements posted yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 16. CHANGE PASSWORD -->
+                <div id="settings" class="module-section">
+                    <div class="card" style="max-width: 500px; margin: 0 auto;">
+                        <h3>Change System Password</h3>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 15px;">Security Policy: Changing the system password requires entering secret code <b>256</b>.</p>
+                        <form id="passwordForm" onsubmit="changePassword(event)">
+                            <div class="form-group">
+                                <label>Secret Code (Required: 256)</label>
+                                <input type="password" id="secret_code_256" placeholder="Enter secret code 256..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" id="curr_pass" placeholder="Enter current password..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="new_pass" placeholder="Enter new password..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <input type="password" id="confirm_pass" placeholder="Confirm new password..." required>
+                            </div>
+                            <button type="submit" class="btn" style="width: 100%; margin-top: 5px;">Update Password</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Watermark -->
+                <div class="watermark contact-info-footer">
+                    Mitooma Vocational Secondary School Management System &bull; Engineered by <span class="brand-highlight">omaraTECHsolutions</span><br>
+                    Developer Contacts: 📞 +256784961499 / 0708251010
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let db = JSON.parse(localStorage.getItem('mitooma_vsc_db_v8')) || {
+            students: [],
+            teachers: [],
+            marks: [],
+            fees: [],
+            attendance: [],
+            classAttendance: {},
+            uploadedLetters: [],
+            payroll: [],
+            categoryFees: {
+                'Term One': { 'Day Scholar': {total: '200000', next: '200000'}, 'Boarding Student': {total: '450000', next: '450000'} },
+                'Term Two': { 'Day Scholar': {total: '200000', next: '200000'}, 'Boarding Student': {total: '450000', next: '450000'} },
+                'Term Three': { 'Day Scholar': {total: '200000', next: '200000'}, 'Boarding Student': {total: '450000', next: '450000'} }
+            },
+            announcements: [],
+            termSettings: {
+                'Term One': '15/05/2026',
+                'Term Two': '14/09/2026',
+                'Term Three': '10/01/2027'
+            }
+        };
+
+        const standardSubjects = [
+            "English", "Geography", "Kiswahili", "Mathematics", "Physics", "Chemistry", "Biology", 
+            "History / Pol. Educ.", "Physical Education", "Entrepreneurship", "Religious Education", 
+            "ICT", "IPS", "Food & Nutrition", "Agriculture", "Literature in English"
+        ];
+
+        let currentUserRole = 'Admin';
+        let loggedInStudentId = '';
+
+        function saveData() {
+            localStorage.setItem('mitooma_vsc_db_v8', JSON.stringify(db));
+            updateStats();
+        }
+
+        function getStoredPassword() {
+            return localStorage.getItem('mitooma_admin_password') || 'mitooma256';
+        }
+
+        function getFeesPassword() {
+            return localStorage.getItem('mitooma_fees_password') || 'mitooma1234';
+        }
+
+        function updateFeesPasswordSecure() {
+            const secret = document.getElementById('fees_secret_code').value.trim();
+            const newP = document.getElementById('new_fees_pass').value.trim();
+            if(secret !== '123') {
+                alert('Invalid secret code! Changing the fees password requires entering secret code "123".');
+                return;
+            }
+            if(!newP) {
+                alert('Please enter a valid new fees password.');
+                return;
+            }
+            localStorage.setItem('mitooma_fees_password', newP);
+            alert('Fees portal password successfully updated!');
+            document.getElementById('fees_secret_code').value = '';
+            document.getElementById('new_fees_pass').value = '';
+        }
+
+        function lockFeesPortal() {
+            document.getElementById('feesContentArea').style.display = 'none';
+            document.getElementById('feesLoginCard').style.display = 'block';
+            document.getElementById('feesPasswordInput').value = '';
+        }
+
+        function verifyPayrollAccess() {
+            const p = document.getElementById('payrollPasswordInput').value.trim();
+            if(p === getFeesPassword()) {
+                document.getElementById('payrollLoginCard').style.display = 'none';
+                document.getElementById('payrollContentArea').style.display = 'block';
+                populateTeacherPayrollDropdown();
+                renderPayrollTable();
+            } else {
+                alert('Incorrect password. Access denied.');
+                document.getElementById('payrollPasswordInput').value = '';
+            }
+        }
+
+        function lockPayrollPortal() {
+            document.getElementById('payrollContentArea').style.display = 'none';
+            document.getElementById('payrollLoginCard').style.display = 'block';
+            document.getElementById('payrollPasswordInput').value = '';
+        }
+
+        function populateTeacherPayrollDropdown() {
+            const select = document.getElementById('p_teacher_name');
+            if(db.teachers.length === 0) {
+                select.innerHTML = '<option value="">No teachers added yet</option>';
+                return;
+            }
+            select.innerHTML = db.teachers.map(t => `<option value="${t.name}">${t.name} (${t.sub})</option>`).join('');
+        }
+
+        function saveStaffPayroll(e) {
+            e.preventDefault();
+            const name = document.getElementById('p_teacher_name').value;
+            const salary = parseFloat(document.getElementById('p_salary').value) || 0;
+            const tax = parseFloat(document.getElementById('p_tax').value) || 0;
+            const nssf = parseFloat(document.getElementById('p_nssf').value) || 0;
+            const advance = parseFloat(document.getElementById('p_advance').value) || 0;
+
+            const netBalance = salary - (tax + nssf + advance);
+            const record = { name, salary, tax, nssf, advance, netBalance };
+
+            db.payroll = db.payroll.filter(p => p.name !== name);
+            db.payroll.push(record);
+            saveData();
+            renderPayrollTable();
+            document.getElementById('payrollForm').reset();
+            alert('Staff payroll record successfully computed and saved!');
+        }
+
+        function renderPayrollTable() {
+            const tbody = document.getElementById('payrollTableBody');
+            if(!db.payroll || db.payroll.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #777;">No payroll records logged yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = db.payroll.map((p, idx) => `
+                <tr>
+                    <td><b>${p.name}</b></td>
+                    <td>UGX ${p.salary.toLocaleString()}</td>
+                    <td>UGX ${p.tax.toLocaleString()}</td>
+                    <td>UGX ${p.nssf.toLocaleString()}</td>
+                    <td>UGX ${p.advance.toLocaleString()}</td>
+                    <td><span style="color: ${p.netBalance >= 0 ? 'var(--primary-green)' : '#d32f2f'}; font-weight: bold;">UGX ${p.netBalance.toLocaleString()}</span></td>
+                    <td><button class="btn btn-danger" style="padding: 2px 6px; font-size: 10px;" onclick="deletePayroll(${idx})">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deletePayroll(idx) {
+            db.payroll.splice(idx, 1);
+            saveData();
+            renderPayrollTable();
+        }
+
+        function toggleLoginInputs() {
+            const role = document.getElementById('loginRole').value;
+            if(role === 'Parent') {
+                document.getElementById('adminLoginFields').style.display = 'none';
+                document.getElementById('parentLoginFields').style.display = 'block';
+            } else {
+                document.getElementById('adminLoginFields').style.display = 'block';
+                document.getElementById('parentLoginFields').style.display = 'none';
+            }
+        }
+
+        function fetchParentStudentName() {
+            const idVal = document.getElementById('parent_student_id').value.trim().toUpperCase();
+            const nameDisp = document.getElementById('parentStudentNameDisplay');
+            const student = db.students.find(s => s.id.toUpperCase() === idVal);
+            if(student) {
+                nameDisp.innerText = `Authenticated Student: ${student.name} (${student.cls})`;
+            } else {
+                nameDisp.innerText = '';
+            }
+        }
+
+        function fetchFeeStudentName() {
+            const idVal = document.getElementById('f_id').value.trim().toUpperCase();
+            const nameDisp = document.getElementById('feeStudentNameDisplay');
+            const student = db.students.find(s => s.id.toUpperCase() === idVal);
+            if(student) {
+                nameDisp.innerText = `✓ Student Found: ${student.name} (${student.cls} - ${student.category})`;
+            } else {
+                nameDisp.innerText = '';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            const datePicker = document.getElementById('att_date_picker');
+            if(datePicker) datePicker.value = today;
+        });
+
+        function changePassword(e) {
+            e.preventDefault();
+            const secret = document.getElementById('secret_code_256').value.trim();
+            const curr = document.getElementById('curr_pass').value.trim();
+            const newP = document.getElementById('new_pass').value.trim();
+            const confP = document.getElementById('confirm_pass').value.trim();
+            const actualPass = getStoredPassword();
+
+            if (secret !== '256') {
+                alert('Password change rejected! Secret code "256" is incorrect.');
+                return;
+            }
+            if (curr !== actualPass) {
+                alert('Current password is incorrect.');
+                return;
+            }
+            if (newP !== confP) {
+                alert('New passwords do not match.');
+                return;
+            }
+
+            localStorage.setItem('mitooma_admin_password', newP);
+            alert('Password successfully updated!');
+            document.getElementById('passwordForm').reset();
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('loginRole').value;
+            currentUserRole = role;
+
+            if(role === 'Admin') {
+                const u = document.getElementById('username').value.trim();
+                const p = document.getElementById('password').value.trim();
+                if(u && p === getStoredPassword()) {
+                    initAppSession('Admin');
+                } else {
+                    alert('Invalid admin credentials.');
+                }
+            } else if(role === 'Parent') {
+                const sId = document.getElementById('parent_student_id').value.trim().toUpperCase();
+                const pCode = document.getElementById('parent_code').value.trim();
+                const student = db.students.find(s => s.id.toUpperCase() === sId);
+
+                if(student && student.parentCode === pCode) {
+                    loggedInStudentId = student.id;
+                    initAppSession('Parent');
+                } else {
+                    alert('Invalid Student ID or Parent Security Code.');
+                }
+            }
+        }
+
+        function initAppSession(role) {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'flex';
+            document.getElementById('userRoleBadge').innerText = `Role: ${role}`;
+            buildSidebarMenu(role);
+            renderAll();
+            loadTermSettings();
+            loadCategoryFeeValues();
+            renderClassAttendanceTable();
+            renderUploadedLetters();
+        }
+
+        function buildSidebarMenu(role) {
+            const menu = document.getElementById('sidebarMenu');
+            if(role === 'Parent') {
+                menu.innerHTML = `
+                    <li class="active" onclick="switchTab('searchportal', this)">🔍 My Student Report Card</li>
+                `;
+                switchTab('searchportal', menu.children[0]);
+                document.getElementById('searchIdInput').value = loggedInStudentId;
+                document.getElementById('searchIdInput').disabled = true;
+                searchStudentById();
+            } else {
+                menu.innerHTML = `
+                    <li class="active" onclick="switchTab('dashboard', this)">Dashboard Overview</li>
+                    <li onclick="switchTab('searchportal', this)">🔍 Student Profile & Report Cards</li>
+                    <li onclick="switchTab('students', this)">Students Database</li>
+                    <li onclick="switchTab('sen1', this)">Senior One (S.1) & Rankings</li>
+                    <li onclick="switchTab('sen2', this)">Senior Two (S.2) & Rankings</li>
+                    <li onclick="switchTab('sen3', this)">Senior Three (S.3) & Rankings</li>
+                    <li onclick="switchTab('sen4', this)">Senior Four (S.4) & Rankings</li>
+                    <li onclick="switchTab('teachers', this)">Teachers & Staff</li>
+                    <li onclick="switchTab('teacherSpayroll', this)">💼 Staff Payroll (Salary, Tax, NSSF)</li>
+                    <li onclick="switchTab('marksentry', this)">📝 Enter Marks (A1, A2, A3, EOT)</li>
+                    <li onclick="switchTab('termsettings', this)">⚙️ Term & Reopening Settings</li>
+                    <li onclick="switchTab('classattendance', this)">📋 Master Attendance & Subjects</li>
+                    <li onclick="switchTab('fees', this)">💰 Fees Records & Category Setup</li>
+                    <li onclick="switchTab('attendance', this)">Attendance & Discipline Log</li>
+                    <li onclick="switchTab('resources', this)">📄 Resources, Circulars & Letters</li>
+                    <li onclick="switchTab('staffcomm', this)">💬 Admin-Staff Communication</li>
+                    <li onclick="switchTab('settings', this)">🔒 Change Password</li>
+                `;
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        function handleBodyClick() {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                }
+            }
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.sidebar-menu li').forEach(li => li.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            if(element) element.classList.add('active');
+            document.getElementById('page-title').innerText = element ? element.innerText : tabId;
+
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('show');
+            }
+
+            if(tabId === 'classattendance') {
+                renderClassAttendanceTable();
+            }
+            if(tabId === 'staffcomm') {
+                renderAnnouncements();
+            }
+            if(tabId === 'resources') {
+                renderUploadedLetters();
+            }
+        }
+
+        function addStudent(e) {
+            e.preventDefault();
+            const student = {
+                id: document.getElementById('s_id').value.trim(),
+                name: document.getElementById('s_name').value.trim(),
+                cls: document.getElementById('s_class').value,
+                category: document.getElementById('s_category').value,
+                parentCode: document.getElementById('s_parent_code').value.trim()
+            };
+            db.students.push(student);
+            saveData();
+            renderAll();
+            document.getElementById('studentForm').reset();
+            alert('Student successfully registered with Parent Security Code!');
+        }
+
+        function deleteStudent(id) {
+            if(confirm(`Are you sure you want to delete student ${id}?`)) {
+                db.students = db.students.filter(s => s.id !== id);
+                db.marks = db.marks.filter(m => m.id !== id);
+                db.fees = db.fees.filter(f => f.id !== id);
+                db.attendance = db.attendance.filter(a => a.id !== id);
+                saveData();
+                renderAll();
+                alert('Student record deleted successfully.');
+            }
+        }
+
+        function addTeacher(e) {
+            e.preventDefault();
+            db.teachers.push({
+                name: document.getElementById('t_name').value,
+                sub: document.getElementById('t_sub').value,
+                phone: document.getElementById('t_phone').value
+            });
+            saveData();
+            renderTeachers();
+            populateTeacherPayrollDropdown();
+            document.getElementById('teacherForm').reset();
+            alert('Teacher successfully added!');
+        }
+
+        function addMarks(e) {
+            e.preventDefault();
+            const markEntry = {
+                id: document.getElementById('m_id').value.trim(),
+                term: document.getElementById('m_term').value,
+                subject: document.getElementById('m_subject').value,
+                a1: parseFloat(document.getElementById('m_a1').value) || 0,
+                a2: parseFloat(document.getElementById('m_a2').value) || 0,
+                a3: parseFloat(document.getElementById('m_a3').value) || 0,
+                eot: parseFloat(document.getElementById('m_eot').value) || 0,
+                initial: document.getElementById('m_initial').value.trim()
+            };
+
+            db.marks = db.marks.filter(m => !(m.id.toLowerCase() === markEntry.id.toLowerCase() && m.term === markEntry.term && m.subject === markEntry.subject));
+            db.marks.push(markEntry);
+            saveData();
+            renderMarks();
+            computeClassRankings();
+            document.getElementById('marksForm').reset();
+            alert('Subject marks saved successfully!');
+        }
+
+        function deleteMark(id, term, subject) {
+            db.marks = db.marks.filter(m => !(m.id === id && m.term === term && m.subject === subject));
+            saveData();
+            renderMarks();
+            computeClassRankings();
+        }
+
+        function saveTermSettings(e) {
+            e.preventDefault();
+            const term = document.getElementById('ts_term').value;
+            const dateStr = document.getElementById('ts_date').value.trim();
+            if(!db.termSettings) db.termSettings = {};
+            db.termSettings[term] = dateStr;
+            saveData();
+            alert(`Reopening date for ${term} updated successfully to ${dateStr}!`);
+        }
+
+        function loadTermSettings() {
+            const term = document.getElementById('ts_term').value;
+            if(!db.termSettings) db.termSettings = {};
+            document.getElementById('ts_date').value = db.termSettings[term] || '14/09/2026';
+        }
+
+        function toggleSubjectDropdown() {
+            const sessionType = document.getElementById('att_session_type').value;
+            const subGroup = document.getElementById('attSubjectGroup');
+            if(sessionType === 'Subject Attendance') {
+                subGroup.style.display = 'block';
+            } else {
+                subGroup.style.display = 'none';
+            }
+            renderClassAttendanceTable();
+        }
+
+        function updateClassAttendanceStatus(studentId, term, status) {
+            const cls = document.getElementById('att_class_filter').value;
+            const sessionType = document.getElementById('att_session_type').value;
+            const subject = sessionType === 'Subject Attendance' ? document.getElementById('att_subject_select').value : sessionType;
+            const dateVal = document.getElementById('att_date_picker').value || new Date().toISOString().split('T')[0];
+
+            if(!db.classAttendance) db.classAttendance = {};
+            const key = `${studentId}_${term}_${subject}_${dateVal}`;
+            db.classAttendance[key] = status;
+        }
+
+        function saveClassAttendanceBatch() {
+            saveData();
+            alert('Attendance batch successfully saved!');
+        }
+
+        function renderClassAttendanceTable() {
+            const cls = document.getElementById('att_class_filter').value;
+            const term = document.getElementById('att_term_filter').value;
+            const sessionType = document.getElementById('att_session_type').value;
+            const subject = sessionType === 'Subject Attendance' ? document.getElementById('att_subject_select').value : sessionType;
+            const dateVal = document.getElementById('att_date_picker').value || new Date().toISOString().split('T')[0];
+
+            const tbody = document.getElementById('classAttTableBody');
+            const studentsInClass = db.students.filter(s => s.cls === cls);
+
+            if(studentsInClass.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #777;">No students registered in ${cls}.</td></tr>`;
+                return;
+            }
+
+            if(!db.classAttendance) db.classAttendance = {};
+
+            tbody.innerHTML = studentsInClass.map(s => {
+                const key = `${s.id}_${term}_${subject}_${dateVal}`;
+                const currentStatus = db.classAttendance[key] || 'Present';
+                return `
+                    <tr>
+                        <td><b>${s.id}</b></td>
+                        <td>${s.name}</td>
+                        <td><span class="badge">${s.category || 'Day Scholar'}</span></td>
+                        <td><b>${subject}</b><br><span style="font-size: 10px; color: #555;">Date: ${dateVal}</span></td>
+                        <td>
+                            <select style="padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px;" onchange="updateClassAttendanceStatus('${s.id}', '${term}', this.value)">
+                                <option value="Present" ${currentStatus === 'Present' ? 'selected' : ''}>Present</option>
+                                <option value="Sick" ${currentStatus === 'Sick' ? 'selected' : ''}>Sick</option>
+                                <option value="Absent" ${currentStatus === 'Absent' ? 'selected' : ''}>Absent</option>
+                                <option value="Home" ${currentStatus === 'Home' ? 'selected' : ''}>Home</option>
+                                <option value="Changed" ${currentStatus === 'Changed' ? 'selected' : ''}>Changed</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function printAttendancePDF() {
+            const header = document.getElementById('attendancePrintHeader');
+            header.style.display = 'block';
+            const element = document.getElementById('printableAttendanceArea');
+            const opt = {
+                margin:       5,
+                filename:     `Attendance_Roster.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save().then(() => {
+                header.style.display = 'none';
+            });
+        }
+
+        function verifyFeesAccess() {
+            const p = document.getElementById('feesPasswordInput').value.trim();
+            if(p === getFeesPassword()) {
+                document.getElementById('feesLoginCard').style.display = 'none';
+                document.getElementById('feesContentArea').style.display = 'block';
+                loadCategoryFeeValues();
+                renderFees();
+            } else {
+                alert('Incorrect password. Access denied.');
+                document.getElementById('feesPasswordInput').value = '';
+            }
+        }
+
+        function saveCategoryFees(e) {
+            e.preventDefault();
+            const term = document.getElementById('cf_term').value;
+            const cat = document.getElementById('cf_category').value;
+            const total = document.getElementById('cf_total').value.trim();
+            const next = document.getElementById('cf_next').value.trim();
+
+            if(!db.categoryFees) db.categoryFees = {};
+            if(!db.categoryFees[term]) db.categoryFees[term] = {};
+            db.categoryFees[term][cat] = { total, next };
+            saveData();
+            renderFees();
+            alert(`Category fees for ${cat} in ${term} updated successfully across all students!`);
+        }
+
+        function loadCategoryFeeValues() {
+            const term = document.getElementById('cf_term').value;
+            const cat = document.getElementById('cf_category').value;
+            if(db.categoryFees && db.categoryFees[term] && db.categoryFees[term][cat]) {
+                document.getElementById('cf_total').value = db.categoryFees[term][cat].total;
+                document.getElementById('cf_next').value = db.categoryFees[term][cat].next;
+            }
+        }
+
+        function addFee(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('f_id').value.trim();
+            const term = document.getElementById('f_term').value;
+            const amountPaid = parseFloat(document.getElementById('f_amount').value.trim()) || 0;
+            const sport = document.getElementById('f_sport').value;
+
+            const student = db.students.find(s => s.id.toLowerCase() === studentId.toLowerCase());
+            if(!student) {
+                alert('Student ID not found in master database.');
+                return;
+            }
+
+            const cat = student.category || 'Day Scholar';
+            const catFees = db.categoryFees && db.categoryFees[term] && db.categoryFees[term][cat] ? db.categoryFees[term][cat] : {total: '200000', next: '200000'};
+            const totalFeesNum = parseFloat(catFees.total.replace(/,/g, '')) || 0;
+            const balanceNum = Math.max(0, totalFeesNum - amountPaid);
+
+            const feeEntry = {
+                id: student.id,
+                name: student.name,
+                term: term,
+                category: cat,
+                total: catFees.total,
+                amount: amountPaid.toString(),
+                balance: balanceNum.toString(),
+                sport: sport,
+                nextFee: catFees.next
+            };
+
+            db.fees = db.fees.filter(f => !(f.id.toLowerCase() === feeEntry.id.toLowerCase() && f.term === feeEntry.term));
+            db.fees.push(feeEntry);
+            saveData();
+            renderFees();
+            document.getElementById('feeForm').reset();
+            document.getElementById('feeStudentNameDisplay').innerText = '';
+            alert('Fee payment and co-curricular sport saved successfully!');
+        }
+
+        function addAtt(e) {
+            e.preventDefault();
+            db.attendance.push({
+                id: document.getElementById('a_id').value,
+                type: document.getElementById('a_type').value,
+                remarks: document.getElementById('a_remarks').value
+            });
+            saveData();
+            renderAtt();
+            document.getElementById('attForm').reset();
+        }
+
+        function uploadLetterFile(e) {
+            e.preventDefault();
+            const title = document.getElementById('ul_title').value.trim();
+            const targetId = document.getElementById('ul_target_id').value.trim();
+            const fileInput = document.getElementById('ul_file');
+            const file = fileInput.files[0];
+
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const fileData = {
+                        title: title,
+                        targetId: targetId || 'All Students and Parents',
+                        fileName: file.name,
+                        fileContent: e.target.result,
+                        date: new Date().toLocaleDateString()
+                    };
+                    if(!db.uploadedLetters) db.uploadedLetters = [];
+                    db.uploadedLetters.unshift(fileData);
+                    saveData();
+                    renderUploadedLetters();
+                    document.getElementById('uploadLetterForm').reset();
+                    alert('Letter file successfully uploaded and addressed!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderUploadedLetters() {
+            const tbody = document.getElementById('uploadedLettersTableBody');
+            if(!db.uploadedLetters || db.uploadedLetters.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #777;">No letter files uploaded yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = db.uploadedLetters.map((l, idx) => `
+                <tr>
+                    <td><b>${l.title}</b></td>
+                    <td><span class="badge">${l.targetId}</span></td>
+                    <td>${l.fileName}</td>
+                    <td>${l.date}</td>
+                    <td>
+                        <a href="${l.fileContent}" download="${l.fileName}" class="btn" style="padding: 3px 8px; font-size: 11px; text-decoration: none;">Download</a>
+                        <button class="btn btn-danger" style="padding: 3px 8px; font-size: 11px; margin-left: 4px;" onclick="deleteUploadedLetter(${idx})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteUploadedLetter(index) {
+            if(confirm('Are you sure you want to delete this uploaded letter?')) {
+                db.uploadedLetters.splice(index, 1);
+                saveData();
+                renderUploadedLetters();
+            }
+        }
+
+        function computeClassRankings() {
+            const classes = ['Senior One', 'Senior Two', 'Senior Three', 'Senior Four'];
+            const term = document.getElementById('gen_term') ? document.getElementById('gen_term').value : 'Term Two';
+
+            classes.forEach(clsName => {
+                const container = document.getElementById(`ranking_${clsName.replace(/\s+/g, '_')}`);
+                if(!container) return;
+
+                const studentsInCls = db.students.filter(s => s.cls === clsName);
+                if(studentsInCls.length === 0) {
+                    container.innerHTML = `<p style="font-size: 12px; color: #555;">No students in ${clsName}.</p>`;
+                    return;
+                }
+
+                let studentAverages = studentsInCls.map(stu => {
+                    const marks = db.marks.filter(m => m.id.toUpperCase() === stu.id.toUpperCase() && m.term === term);
+                    if(marks.length === 0) return { student: stu, avg: 0 };
+                    
+                    let sum = 0;
+                    marks.forEach(m => {
+                        const avgA = (m.a1 + m.a2 + m.a3) / 3;
+                        const cw20 = (avgA / 3) * 20;
+                        sum += (cw20 + m.eot);
+                    });
+                    return { student: stu, avg: sum / marks.length };
+                });
+
+                studentAverages.sort((a, b) => b.avg - a.avg);
+
+                const top3 = studentAverages.slice(0, 3);
+                const bottom3 = studentAverages.slice(-3).reverse();
+
+                let html = `<div style="display: flex; gap: 20px; flex-wrap: wrap; font-size: 12px;">`;
+                html += `<div><b>Top 3 Performers:</b><ol style="margin-left: 15px; margin-top: 3px;">`;
+                top3.forEach(t => {
+                    html += `<li>${t.student.name} (${t.student.id}) - <b>${t.avg.toFixed(1)}%</b></li>`;
+                });
+                html += `</ol></div>`;
+
+                html += `<div><b>Bottom 3 Performers:</b><ol style="margin-left: 15px; margin-top: 3px;">`;
+                bottom3.forEach(b => {
+                    html += `<li>${b.student.name} (${b.student.id}) - <b>${b.avg.toFixed(1)}%</b></li>`;
+                });
+                html += `</ol></div></div>`;
+
+                container.innerHTML = html;
+            });
+        }
+
+        function getGradeAndDescriptor(totalPercent) {
+            if (totalPercent >= 80) return { grade: 'D1', level: '3', desc: 'Outstanding' };
+            if (totalPercent >= 75) return { grade: 'D2', level: '3', desc: 'Outstanding' };
+            if (totalPercent >= 70) return { grade: 'C3', level: '3', desc: 'Outstanding' };
+            if (totalPercent >= 60) return { grade: 'C4', level: '2', desc: 'Moderate' };
+            if (totalPercent >= 50) return { grade: 'C5', level: '2', desc: 'Moderate' };
+            if (totalPercent >= 45) return { grade: 'C6', level: '2', desc: 'Moderate' };
+            if (totalPercent >= 40) return { grade: 'P7', level: '1', desc: 'Basic' };
+            if (totalPercent >= 35) return { grade: 'P8', level: '1', desc: 'Basic' };
+            return { grade: 'F9', level: '1', desc: 'Basic' };
+        }
+
+        function searchStudentById() {
+            const query = document.getElementById('searchIdInput').value.trim().toUpperCase();
+            const term = document.getElementById('gen_term').value;
+            const resultArea = document.getElementById('searchResultArea');
+            const student = db.students.find(s => s.id.toUpperCase() === query);
+
+            if (!student) {
+                resultArea.innerHTML = `<p style="color: #d32f2f; margin-top: 10px; font-size: 13px;">No student found with ID: ${query}</p>`;
+                return;
+            }
+
+            if(currentUserRole === 'Parent' && student.id.toUpperCase() !== loggedInStudentId.toUpperCase()) {
+                resultArea.innerHTML = `<p style="color: #d32f2f; margin-top: 10px; font-size: 13px;">Access Denied. You are only authorized to view details for your registered student.</p>`;
+                return;
+            }
+
+            const cls = student.cls;
+            const studentMarks = db.marks.filter(m => m.id.toUpperCase() === query && m.term === term);
+            const studentFee = db.fees.find(f => f.id.toUpperCase() === query && f.term === term) || { total: '200,000', amount: '0', balance: '200,000', sport: 'Football', nextFee: '200,000' };
+            const nextTermDate = db.termSettings && db.termSettings[term] ? db.termSettings[term] : '14/09/2026';
+
+            let totalSumPercentage = 0;
+            let subjectRowsCount = 0;
+
+            let tableRowsHTML = standardSubjects.map(subj => {
+                const m = studentMarks.find(item => item.subject.toLowerCase() === subj.toLowerCase());
+                if(!m) {
+                    return `
+                        <tr>
+                            <td>${subj}</td>
+                            <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+                        </tr>
+                    `;
+                }
+
+                const avgA = (m.a1 + m.a2 + m.a3) / 3;
+                const coursework20 = (avgA / 3) * 20;
+                const total100 = coursework20 + m.eot;
+                
+                totalSumPercentage += total100;
+                subjectRowsCount++;
+
+                const res = getGradeAndDescriptor(total100);
+
+                return `
+                    <tr>
+                        <td>${subj}</td>
+                        <td>${m.a1.toFixed(1)}</td>
+                        <td>${m.a2.toFixed(1)}</td>
+                        <td>${m.a3.toFixed(1)}</td>
+                        <td>${avgA.toFixed(1)}</td>
+                        <td>${coursework20.toFixed(1)}</td>
+                        <td>${m.eot.toFixed(1)}</td>
+                        <td><b>${total100.toFixed(1)}</b></td>
+                        <td><b>${res.grade}</b></td>
+                        <td>${res.level}</td>
+                        <td>${res.desc}</td>
+                        <td>${m.initial || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const overallAvg = subjectRowsCount > 0 ? (totalSumPercentage / subjectRowsCount).toFixed(1) : '0.0';
+            const overallRes = subjectRowsCount > 0 ? getGradeAndDescriptor(parseFloat(overallAvg)) : {grade: '-', level: '-', desc: '-'};
+
+            resultArea.innerHTML = `
+                <div id="printable-area" class="report-card-wrapper">
+                    <div class="report-header-content">
+                        <div class="report-header-text">
+                            <h1>Mitooma Vocational Secondary School</h1>
+                            <p>"AKILI NI MALI" | P.O. Box 267, Bushenyi, Uganda</p>
+                            <p>Official School Administration Contacts: <b>0774804838 / 0782205396</b></p>
+                        </div>
+                    </div>
+
+                    <div class="report-sub-banner">
+                        End of ${term.toUpperCase()} Summative Report, 2026
+                    </div>
+
+                    <div class="student-bio-row">
+                        <div>NAME: &nbsp;&nbsp; <u>${student.name.toUpperCase()}</u></div>
+                        <div>CLASS: &nbsp;&nbsp; <u>${cls.toUpperCase()} (${student.category})</u></div>
+                    </div>
+
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 22%;">SUBJECT</th>
+                                <th>A1</th>
+                                <th>A2</th>
+                                <th>A3</th>
+                                <th>AVG</th>
+                                <th>CW 20%</th>
+                                <th>EOT 80%</th>
+                                <th>TOTAL</th>
+                                <th>GRD</th>
+                                <th>LVL</th>
+                                <th>DESCRIPTOR</th>
+                                <th>TR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${tableRowsHTML}
+                            <tr style="background: #f2f2f2; font-weight: bold;">
+                                <td colspan="7">OVERALL AVERAGE:</td>
+                                <td colspan="2">${overallAvg}%</td>
+                                <td colspan="3"><span class="badge">${overallRes.desc}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="grading-scale-box">
+                        <table class="grading-table">
+                            <tr><td>0.1 - 1.49: Basic</td><td>1.5 - 2.49: Moderate</td></tr>
+                            <tr><td colspan="2">2.5 - 3.0: Outstanding</td></tr>
+                        </table>
+
+                        <div style="flex-grow: 1; border: 1px solid #000; padding: 4px 6px; font-size: 10px;">
+                            <b>CO-CURRICULAR ACTIVITY:</b> &nbsp; ${studentFee.sport || 'Football'} (Active Participant)
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 6px; border: 1px solid #000; padding: 4px 6px; font-size: 10px;">
+                        <b>SCHOOL FEES:</b> &nbsp;&nbsp; Total: <b>UGX ${studentFee.total}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Paid: <b>UGX ${studentFee.amount}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Balance: <b>UGX ${studentFee.balance}</b>
+                    </div>
+
+                    <div class="comment-box-report">
+                        <b>CLASS TEACHER'S COMMENT:</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sign:</b> -
+                    </div>
+
+                    <div class="comment-box-report">
+                        <b>HEADTEACHER'S COMMENT:</b> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Sign:</b> -
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 10px; font-weight: bold; border-top: 1px solid #000; padding-top: 4px;">
+                        <div>Next term begins: <u>${nextTermDate}</u> | Next Term Fees: <b>UGX ${studentFee.nextFee}</b></div>
+                        <div>Sign: -</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; display: flex; gap: 10px;" class="no-print">
+                    <button class="btn btn-pdf" onclick="generatePDF('${student.id}', '${student.name}')">📥 Download 1-Page PDF Report</button>
+                    <button class="btn btn-print" onclick="window.print()">🖨️ Print Report Card</button>
+                </div>
+            `;
+        }
+
+        function generatePDF(id, name) {
+            const element = document.getElementById('printable-area');
+            const opt = {
+                margin:       5,
+                filename:     `ReportCard_${id}_${name.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        function printClassPDF(className) {
+            const studentsInClass = db.students.filter(s => s.cls === className);
+            if(studentsInClass.length === 0) {
+                alert(`No students found in ${className}.`);
+                return;
+            }
+
+            let rows = studentsInClass.map((s, idx) => `
+                <tr>
+                    <td>${idx+1}</td>
+                    <td><b>${s.id}</b></td>
+                    <td>${s.name}</td>
+                    <td>${s.category}</td>
+                </tr>
+            `).join('');
+
+            const printWin = window.open('', '', 'height=700,width=900');
+            printWin.document.write(`
+                <html>
+                <head>
+                    <title>${className} Class List - Mitooma Vocational SS</title>
+                    <style>
+                        body { font-family: sans-serif; padding: 20px; color: #000; }
+                        h2 { color: #1b5e20; text-align: center; margin-bottom: 5px; }
+                        p { text-align: center; font-size: 12px; margin-bottom: 15px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        th, td { border: 1px solid #000; padding: 6px 10px; text-align: left; font-size: 12px; }
+                        th { background: #1b5e20; color: #fff; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Mitooma Vocational Secondary School</h2>
+                    <p>Official Class List: <b>${className}</b> (2026 Academic Year) &bull; Official Contacts: 0774804838 / 0782205396</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Student ID</th>
+                                <th>Student Full Name</th>
+                                <th>Category</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rows}
+                        </tbody>
+                    </table>
+                    <script>
+                        window.onload = function() { window.print(); };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWin.document.close();
+        }
+
+        function generateLetter(e) {
+            e.preventDefault();
+            const studentId = document.getElementById('l_id').value.trim();
+            const type = document.getElementById('l_type').value;
+            const reason = document.getElementById('l_reason').value.trim();
+            const resultArea = document.getElementById('letterResultArea');
+
+            const student = db.students.find(s => s.id.toUpperCase() === studentId.toUpperCase());
+            if(!student) {
+                resultArea.innerHTML = `<p style="color: #d32f2f; margin-top: 10px;">Student ID not found.</p>`;
+                return;
+            }
+
+            let letterContent = '';
+            if(type === 'Offer Letter') {
+                letterContent = `
+                    <h3>ADMISSION OFFER LETTER</h3>
+                    <p>Dear Parent/Guardian of <b>${student.name} (${student.id})</b>,</p>
+                    <p>We are pleased to offer provisional admission to <b>${student.cls} (${student.category})</b> at Mitooma Vocational Secondary School for the academic year 2026. Our curriculum follows NCDC guidelines, integrating academic rigor with practical vocational competencies.</p>
+                    <p>Please report to school with this letter and required scholastic materials.</p>
+                `;
+            } else if(type === 'End of Term Circular') {
+                letterContent = `
+                    <h3>END OF TERM CIRCULAR</h3>
+                    <p>Dear Parent/Guardian of <b>${student.name} (${student.id})</b>,</p>
+                    <p>We extend our sincere gratitude for your continued support. As we conclude the term, please note that holiday assignments have been issued to ensure students stay academically engaged.</p>
+                    <p>Parents are reminded to clear all school dues promptly prior to the opening of next term.</p>
+                `;
+            } else if(type === 'Suspension Letter') {
+                letterContent = `
+                    <h3>NOTICE OF STUDENT SUSPENSION</h3>
+                    <p>Dear Parent/Guardian of <b>${student.name} (${student.id})</b>,</p>
+                    <p>This letter serves as formal notification that <b>${student.name}</b> has been suspended from school due to the following reason(s):</p>
+                    <blockquote style="background: #f9f9f9; padding: 10px; border-left: 4px solid #d32f2f; margin: 10px 0;"><b>${reason || 'Violation of school code of conduct'}</b></blockquote>
+                    <p>You are required to report to the administration office alongside the student on the specified recall date.</p>
+                `;
+            } else if(type === 'Fees Clearance Reminder') {
+                const feeRecord = db.fees.find(f => f.id.toUpperCase() === student.id.toUpperCase()) || {balance: '200,000'};
+                letterContent = `
+                    <h3>FEES BALANCE CLEARANCE REMINDER</h3>
+                    <p>Dear Parent/Guardian of <b>${student.name} (${student.id})</b>,</p>
+                    <p>This is a gentle reminder that your child has an outstanding fees balance of <b>UGX ${feeRecord.balance}</b> for the current term.</p>
+                    <p>Prompt settlement enables the school to sustain operational standards and provide uninterrupted learning services.</p>
+                `;
+            }
+
+            resultArea.innerHTML = `
+                <div class="card" id="printableLetterCard" style="margin-top: 15px; border: 2px solid var(--primary-green);">
+                    <div style="text-align: center; border-bottom: 2px solid var(--primary-green); padding-bottom: 8px; margin-bottom: 12px;">
+                        <h2 style="color: var(--primary-green); font-size: 16px;">Mitooma Vocational Secondary School</h2>
+                        <p style="font-size: 11px;">P.O. Box 267, Bushenyi, Uganda | Official Administration Contacts: <b>0774804838 / 0782205396</b></p>
+                    </div>
+                    ${letterContent}
+                    <div style="margin-top: 20px; display: flex; justify-content: space-between; font-size: 12px; font-weight: bold;">
+                        <div>Headmaster Signature: ............................................</div>
+                        <div>Date: ${new Date().toLocaleDateString()}</div>
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;" class="no-print">
+                        <button class="btn btn-pdf" onclick="downloadLetterPDF()">📥 Download / Print Letter PDF</button>
+                        <button class="btn btn-print" onclick="window.print()">🖨️ Print Letter</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function downloadLetterPDF() {
+            const element = document.getElementById('printableLetterCard');
+            const opt = {
+                margin:       5,
+                filename:     `Administrative_Letter.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+
+        function postAdminAnnouncement(e) {
+            e.preventDefault();
+            const sender = document.getElementById('c_sender').value;
+            const message = document.getElementById('c_message').value.trim();
+
+            const announcement = {
+                id: Date.now(),
+                sender: sender,
+                message: message,
+                date: new Date().toLocaleString(),
+                replies: []
+            };
+
+            db.announcements.unshift(announcement);
+            saveData();
+            renderAnnouncements();
+            document.getElementById('commForm').reset();
+            alert('Announcement posted successfully to teaching staff!');
+        }
+
+        function postTeacherReply(announcementId) {
+            const replyInput = document.getElementById(`reply_text_${announcementId}`);
+            const teacherNameInput = document.getElementById(`reply_name_${announcementId}`);
+            const replyText = replyInput.value.trim();
+            const teacherName = teacherNameInput.value.trim();
+
+            if(!replyText || !teacherName) {
+                alert('Please enter your name and reply message.');
+                return;
+            }
+
+            const announcement = db.announcements.find(a => a.id === announcementId);
+            if(announcement) {
+                announcement.replies.push({
+                    teacher: teacherName,
+                    message: replyText,
+                    date: new Date().toLocaleString()
+                });
+                saveData();
+                renderAnnouncements();
+            }
+        }
+
+        function renderAnnouncements() {
+            const board = document.getElementById('announcementBoard');
+            if(!db.announcements || db.announcements.length === 0) {
+                board.innerHTML = `<p style="color: #777; font-size: 13px;">No announcements posted yet.</p>`;
+                return;
+            }
+
+            board.innerHTML = db.announcements.map(a => {
+                const repliesHTML = a.replies.map(r => `
+                    <div style="background: #f9f9f9; padding: 8px; border-radius: 4px; margin-top: 6px; border-left: 3px solid var(--light-green); font-size: 12px;">
+                        <b>${r.teacher}</b> <span style="font-size: 10px; color: #777;">(${r.date})</span>:<br>
+                        ${r.message}
+                    </div>
+                `).join('');
+
+                return `
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 6px; margin-bottom: 12px; border: 1px solid var(--primary-green);">
+                        <h4 style="color: var(--primary-green); font-size: 14px; margin-bottom: 3px;">From: ${a.sender} <span style="font-size: 11px; color: #555; font-weight: normal;">(${a.date})</span></h4>
+                        <p style="font-size: 13px; color: #333; margin-bottom: 10px;">${a.message}</p>
+                        
+                        <div style="margin-top: 10px; padding-left: 10px; border-left: 2px solid #ccc;">
+                            <h5 style="font-size: 12px; color: #444; margin-bottom: 5px;">Teacher Replies:</h5>
+                            ${repliesHTML || '<p style="font-size: 12px; color: #777;">No replies yet.</p>'}
+                            
+                            <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                <input type="text" id="reply_name_${a.id}" placeholder="Your Teacher Name..." style="padding: 6px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; flex: 1; min-width: 140px;">
+                                <input type="text" id="reply_text_${a.id}" placeholder="Type your reply..." style="padding: 6px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; flex: 2; min-width: 200px;">
+                                <button class="btn" style="padding: 6px 12px; font-size: 12px;" onclick="postTeacherReply(${a.id})">Reply</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderStudents() {
+            const tbody = document.getElementById('studentTableBody');
+            if(db.students.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #777;">No students registered yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = db.students.map(s => `
+                <tr>
+                    <td><b>${s.id}</b></td>
+                    <td>${s.name}</td>
+                    <td>${s.cls}</td>
+                    <td><span class="badge">${s.category || 'Day Scholar'}</span></td>
+                    <td><code>${s.parentCode || 'N/A'}</code></td>
+                    <td><span class="badge">Active</span></td>
+                    <td>
+                        <button class="btn" style="padding: 4px 8px; font-size: 11px;" onclick="document.getElementById('searchIdInput').value='${s.id}'; switchTab('searchportal', document.querySelectorAll('.sidebar-menu li')[1]); searchStudentById();">View & Report</button>
+                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 11px; margin-left: 5px;" onclick="deleteStudent('${s.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            ['Senior One', 'Senior Two', 'Senior Three', 'Senior Four'].forEach((cls, idx) => {
+                const targetBody = document.getElementById(`sen${idx+1}TableBody`);
+                const filtered = db.students.filter(s => s.cls === cls);
+                if(filtered.length === 0) {
+                    targetBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #777;">No students in ${cls} yet.</td></tr>`;
+                } else {
+                    targetBody.innerHTML = filtered.map(s => `
+                        <tr>
+                            <td><b>${s.id}</b></td>
+                            <td>${s.name}</td>
+                            <td><span class="badge">${s.category || 'Day Scholar'}</span></td>
+                            <td><button class="btn" style="padding: 4px 10px; font-size: 11px;" onclick="document.getElementById('searchIdInput').value='${s.id}'; switchTab('searchportal', document.querySelectorAll('.sidebar-menu li')[1]); searchStudentById();">View Record</button></td>
+                        </tr>
+                    `).join('');
+                }
+            });
+        }
+
+        function renderTeachers() {
+            const tbody = document.getElementById('teacherTableBody');
+            if(db.teachers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #777;">No teachers added yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = db.teachers.map(t => `
+                <tr>
+                    <td><b>${t.name}</b></td>
+                    <td>${t.sub}</td>
+                    <td>${t.phone}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderMarks() {
+            const tbody = document.getElementById('marksTableBody');
+            if(db.marks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #777;">No marks recorded yet.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = db.marks.map(m => `
+                <tr>
+                    <td><b>${m.id}</b></td>
+                    <td>${m.term}</td>
+                    <td>${m.subject}</td>
+                    <td>${m.a1}</td>
+                    <td>${m.a2}</td>
+                    <td>${m.a3}</td>
+                    <td>${m.eot}</td>
+                    <td>${m.initial}</td>
+                    <td><button class="btn btn-danger" style="padding: 2px 6px; font-size: 10px;" onclick="deleteMark('${m.id}', '${m.term}', '${m.subject}')">Delete</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderFees() {
+            const tbody = document.getElementById('feeTableBody');
+            let totalCollected = 0;
+            let totalBalanceSum = 0;
+
+            if(db.fees.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #777;">No fee entries logged yet.</td></tr>`;
+            } else {
+                tbody.innerHTML = db.fees.map(f => {
+                    const paidNum = parseFloat(f.amount.replace(/,/g, '')) || 0;
+                    const balNum = parseFloat(f.balance.replace(/,/g, '')) || 0;
+                    totalCollected += paidNum;
+                    totalBalanceSum += balNum;
+
+                    return `
+                        <tr>
+                            <td><b>${f.id}</b></td>
+                            <td>${f.name || '-'}</td>
+                            <td>${f.term}</td>
+                            <td><span class="badge">${f.category}</span></td>
+                            <td>UGX ${f.total}</td>
+                            <td>UGX ${f.amount}</td>
+                            <td><span style="color: #d32f2f; font-weight: bold;">UGX ${f.balance}</span></td>
+                            <td>${f.sport || 'Football'}</td>
+                            <td>UGX ${f.nextFee}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('sum-collected').innerText = `UGX ${totalCollected.toLocaleString()}`;
+            document.getElementById('sum-balance').innerText = `UGX ${totalBalanceSum.toLocaleString()}`;
+        }
+
+        function renderAtt() {
+            const attBody = document.getElementById('attTableBody');
+            if(db.attendance.length === 0) {
+                attBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #777;">No records logged yet.</td></tr>`;
+                return;
+            }
+            attBody.innerHTML = db.attendance.map(a => `
+                <tr>
+                    <td><b>${a.id}</b></td>
+                    <td><span class="badge">${a.type}</span></td>
+                    <td>${a.remarks}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('stat-students').innerText = db.students.length;
+            document.getElementById('stat-teachers').innerText = db.teachers.length;
+            document.getElementById('stat-fees').innerText = db.fees.length;
+        }
+
+        function renderAll() {
+            renderStudents();
+            renderTeachers();
+            renderMarks();
+            renderFees();
+            renderAtt();
+            renderClassAttendanceTable();
+            renderAnnouncements();
+            renderUploadedLetters();
+            computeClassRankings();
+            updateStats();
+        }
+
+        updateStats();
+    </script>
+</body>
+</html>
